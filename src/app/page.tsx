@@ -1,95 +1,121 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
 
-export default function Home() {
+import { fetcher } from "@/lib/actions";
+import { addTag, deleteTag, editTag } from "@/lib/actions/tags";
+import Footer from "@/lib/components/Footer";
+import Form from "@/lib/components/Form";
+import TagList from "@/lib/components/TagList";
+import { Tag } from "@/lib/types";
+import useSWR from "swr";
+
+export default function Page() {
+  const { data, mutate } = useSWR<Tag[]>(
+    "https://retoolapi.dev/EAoi29/tags",
+    fetcher,
+  );
+
+  async function handleAddTag({
+    label,
+    tags = [],
+  }: {
+    label: string;
+    tags?: Tag[];
+  }) {
+    const lastTag = tags.at(-1);
+    const id = lastTag?.id ? lastTag?.id + 1 : 0;
+    const newTag = {
+      id,
+      label,
+    };
+
+    try {
+      // Set the local state with `optimisticData` and on the background the API will update and return 'the same' data
+      await mutate(addTag({ tag: newTag, tags }), {
+        optimisticData: [...tags, newTag],
+        rollbackOnError: true,
+        populateCache: true,
+        revalidate: false,
+      });
+      // Out of scope: Show success message
+      console.log("Successfully added tag");
+    } catch (e) {
+      // Because of `rollbackOnError`, the data will be updated when the API has an error
+
+      // Out of scope: Show error message
+      console.error("Error");
+    }
+  }
+
+  async function handleEditTag({ tag, tags }: { tag: Tag; tags: Tag[] }) {
+    const updatedTags = tags.map((t) => (t.id === tag.id ? tag : t));
+
+    try {
+      // Set the local state with `optimisticData` and on the background the API will update and return 'the same' data
+      await mutate(editTag({ tag, tags: updatedTags }), {
+        optimisticData: updatedTags,
+        rollbackOnError: true,
+        populateCache: true,
+        revalidate: false,
+      });
+      // Out of scope: Show success message
+      console.log("Successfully edited tag");
+    } catch (e) {
+      // Because of `rollbackOnError`, the data will be updated when the API has an error
+
+      // Out of scope: Show error message
+      console.error("Error");
+    }
+  }
+
+  async function handleDeleteTag({ id, tags }: { id: number; tags: Tag[] }) {
+    if (tags.length < 2) {
+      alert(
+        "Unfortunately the API does not allow the deletion of the last item. There has to be at least one tag.",
+      );
+      return;
+    }
+
+    // Remove the to-be-deleted tag from the `tags`
+    const updatedTags = tags.filter((t) => t.id !== id);
+
+    console.log("delete", id);
+    try {
+      // Set the local state with `optimisticData` and on the background the API will update and return 'the same' data
+      await mutate(deleteTag({ id, tags: updatedTags }), {
+        optimisticData: updatedTags,
+        rollbackOnError: true,
+        populateCache: true,
+        revalidate: false,
+      });
+      // Out of scope: Show success message
+      console.log("Successfully deleted tag");
+    } catch (e) {
+      // Because of `rollbackOnError`, the data will be updated when the API has an error
+
+      // Out of scope: Show error message
+      console.error("Error");
+    }
+  }
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <div>
+      <h2>Tags</h2>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      {!data && "loading..."}
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+      {data && (
+        <>
+          <TagList
+            tags={data}
+            handleEditTag={handleEditTag}
+            handleDeleteTag={handleDeleteTag}
+          />
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+          <Form tags={data} handleAddTag={handleAddTag} />
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+          <Footer />
+        </>
+      )}
+    </div>
+  );
 }
