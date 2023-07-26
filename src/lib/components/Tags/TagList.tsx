@@ -1,6 +1,13 @@
 import { useState } from 'react'
-import { Tag } from '../types'
-import { tagAlreadyExists } from '../utils'
+import { type Tag } from '../../types'
+import { tagAlreadyExists } from '../../utils'
+import List from '../List'
+import DeleteButton from '../Button/DeleteButton'
+import Button from '../Button'
+import Input from '../Form/Input'
+import { default as TagComponent } from './Tag'
+import TagItem from './TagItem'
+import EditTag from './EditTag'
 
 type TagListProps = {
   handleDeleteTag: ({ id, tags }: { id: number; tags: Tag[] }) => void
@@ -44,13 +51,13 @@ const TagList = ({ handleDeleteTag, handleEditTag, tags }: TagListProps) => {
   }
 
   return (
-    <ul>
+    <List>
       {tags.map((tag: Tag) => {
         const isEditing = currentId === tag.id
         return (
-          <li key={tag.id}>
+          <TagItem key={tag.id}>
             {isEditing ? (
-              <input
+              <EditTag
                 aria-label="Edit tag"
                 autoFocus
                 onChange={(e) => setNewTagLabel(e.target.value)}
@@ -59,26 +66,26 @@ const TagList = ({ handleDeleteTag, handleEditTag, tags }: TagListProps) => {
                 defaultValue={tag.label}
               />
             ) : (
-              tag.label
+              <TagComponent>{tag.label}</TagComponent>
             )}
 
-            <button
+            <Button
               onClick={() => (isEditing ? saveTag() : setCurrentId(tag.id))}
               type="button"
             >
               {isEditing ? 'Save' : 'Edit'}
-            </button>
+            </Button>
 
-            <button
+            <DeleteButton
               onClick={() => handleDeleteTag({ id: tag.id, tags })}
               type="button"
             >
               Delete
-            </button>
-          </li>
+            </DeleteButton>
+          </TagItem>
         )
       })}
-    </ul>
+    </List>
   )
 }
 

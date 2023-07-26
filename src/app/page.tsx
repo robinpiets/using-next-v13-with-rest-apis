@@ -2,11 +2,13 @@
 
 import { fetcher } from '@/lib/actions'
 import { addTag, deleteTag, editTag } from '@/lib/actions/tags'
-import Footer from '@/lib/components/Footer'
-import Form from '@/lib/components/Form'
-import TagList from '@/lib/components/TagList'
+import Footer from '@/lib/components/Layout/Footer'
+import TagForm from '@/lib/components/Tags/TagForm'
+import TagList from '@/lib/components/Tags/TagList'
 import { Tag } from '@/lib/types'
 import useSWR from 'swr'
+import Container from '@/lib/components/Layout/Container'
+import Main from '@/lib/components/Layout/Main'
 
 export default function Page() {
   const { data, mutate } = useSWR<Tag[]>(
@@ -98,24 +100,25 @@ export default function Page() {
   }
 
   return (
-    <div>
-      <h2>Tags</h2>
+    <Container>
+      <Main>
+        <h1>Tags</h1>
 
-      {!data && 'loading...'}
+        {!data && 'loading...'}
 
-      {data && (
-        <>
-          <TagList
-            tags={data}
-            handleEditTag={handleEditTag}
-            handleDeleteTag={handleDeleteTag}
-          />
+        {data && (
+          <>
+            <TagList
+              tags={data}
+              handleEditTag={handleEditTag}
+              handleDeleteTag={handleDeleteTag}
+            />
 
-          <Form tags={data} handleAddTag={handleAddTag} />
-
-          <Footer />
-        </>
-      )}
-    </div>
+            <TagForm tags={data} handleAddTag={handleAddTag} />
+          </>
+        )}
+      </Main>
+      <Footer />
+    </Container>
   )
 }

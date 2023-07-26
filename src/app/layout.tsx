@@ -1,8 +1,6 @@
-import './globals.css'
+import { StyledComponentsRegistry } from './StyledComponentsRegistry'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
+import Providers from '@/lib/components/Providers'
 
 export const metadata: Metadata = {
   title: 'Tag app',
@@ -16,7 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body>
+        <StyledComponentsRegistry>
+          <Providers>{children}</Providers>
+        </StyledComponentsRegistry>
+      </body>
     </html>
   )
 }

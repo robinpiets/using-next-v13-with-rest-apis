@@ -1,7 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { tagAlreadyExists } from '../utils'
+import { tagAlreadyExists } from '../../utils'
+import Button from '../Button'
+import Input from '../Form/Input'
+import Label from '../Form/Label'
 
 // Out of scope: create unique IDs for each form
 const ID = 'unique-id'
@@ -11,12 +14,12 @@ type Tag = {
   label: string
 }
 
-type FormProps = {
+type TagFormProps = {
   handleAddTag: ({ label, tags }: { label: string; tags: Tag[] }) => void
   tags: Tag[]
 }
 
-const Form = ({ tags, handleAddTag }: FormProps) => {
+const TagForm = ({ tags, handleAddTag }: TagFormProps) => {
   const [newTagLabel, setNewTagLabel] = useState('')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,17 +38,19 @@ const Form = ({ tags, handleAddTag }: FormProps) => {
 
   return (
     <form noValidate onSubmit={handleSubmit}>
-      <label htmlFor={`{ID}-input`}>New tag</label>
-      <input
+      <Label htmlFor={`{ID}-input`}>New tag</Label>
+      <Input
         autoFocus
         id={`{ID}-input`}
         onChange={(e) => setNewTagLabel(e.target.value)}
         type="text"
         value={newTagLabel}
       />
-      <button type="submit">Create tag</button>
+      <Button color="red" type="submit">
+        Create tag
+      </Button>
     </form>
   )
 }
 
-export default Form
+export default TagForm
