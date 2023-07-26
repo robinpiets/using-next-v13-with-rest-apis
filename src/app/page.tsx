@@ -1,32 +1,32 @@
-"use client";
+'use client'
 
-import { fetcher } from "@/lib/actions";
-import { addTag, deleteTag, editTag } from "@/lib/actions/tags";
-import Footer from "@/lib/components/Footer";
-import Form from "@/lib/components/Form";
-import TagList from "@/lib/components/TagList";
-import { Tag } from "@/lib/types";
-import useSWR from "swr";
+import { fetcher } from '@/lib/actions'
+import { addTag, deleteTag, editTag } from '@/lib/actions/tags'
+import Footer from '@/lib/components/Footer'
+import Form from '@/lib/components/Form'
+import TagList from '@/lib/components/TagList'
+import { Tag } from '@/lib/types'
+import useSWR from 'swr'
 
 export default function Page() {
   const { data, mutate } = useSWR<Tag[]>(
-    "https://retoolapi.dev/EAoi29/tags",
+    'https://retoolapi.dev/EAoi29/tags',
     fetcher,
-  );
+  )
 
   async function handleAddTag({
     label,
     tags = [],
   }: {
-    label: string;
-    tags?: Tag[];
+    label: string
+    tags?: Tag[]
   }) {
-    const lastTag = tags.at(-1);
-    const id = lastTag?.id ? lastTag?.id + 1 : 0;
+    const lastTag = tags.at(-1)
+    const id = lastTag?.id ? lastTag?.id + 1 : 0
     const newTag = {
       id,
       label,
-    };
+    }
 
     try {
       // Set the local state with `optimisticData` and on the background the API will update and return 'the same' data
@@ -35,19 +35,19 @@ export default function Page() {
         rollbackOnError: true,
         populateCache: true,
         revalidate: false,
-      });
+      })
       // Out of scope: Show success message
-      console.log("Successfully added tag");
+      console.log('Successfully added tag')
     } catch (e) {
       // Because of `rollbackOnError`, the data will be updated when the API has an error
 
       // Out of scope: Show error message
-      console.error("Error");
+      console.error('Error')
     }
   }
 
   async function handleEditTag({ tag, tags }: { tag: Tag; tags: Tag[] }) {
-    const updatedTags = tags.map((t) => (t.id === tag.id ? tag : t));
+    const updatedTags = tags.map((t) => (t.id === tag.id ? tag : t))
 
     try {
       // Set the local state with `optimisticData` and on the background the API will update and return 'the same' data
@@ -56,29 +56,29 @@ export default function Page() {
         rollbackOnError: true,
         populateCache: true,
         revalidate: false,
-      });
+      })
       // Out of scope: Show success message
-      console.log("Successfully edited tag");
+      console.log('Successfully edited tag')
     } catch (e) {
       // Because of `rollbackOnError`, the data will be updated when the API has an error
 
       // Out of scope: Show error message
-      console.error("Error");
+      console.error('Error')
     }
   }
 
   async function handleDeleteTag({ id, tags }: { id: number; tags: Tag[] }) {
     if (tags.length < 2) {
       alert(
-        "Unfortunately the API does not allow the deletion of the last item. There has to be at least one tag.",
-      );
-      return;
+        'Unfortunately the API does not allow the deletion of the last item. There has to be at least one tag.',
+      )
+      return
     }
 
     // Remove the to-be-deleted tag from the `tags`
-    const updatedTags = tags.filter((t) => t.id !== id);
+    const updatedTags = tags.filter((t) => t.id !== id)
 
-    console.log("delete", id);
+    console.log('delete', id)
     try {
       // Set the local state with `optimisticData` and on the background the API will update and return 'the same' data
       await mutate(deleteTag({ id, tags: updatedTags }), {
@@ -86,14 +86,14 @@ export default function Page() {
         rollbackOnError: true,
         populateCache: true,
         revalidate: false,
-      });
+      })
       // Out of scope: Show success message
-      console.log("Successfully deleted tag");
+      console.log('Successfully deleted tag')
     } catch (e) {
       // Because of `rollbackOnError`, the data will be updated when the API has an error
 
       // Out of scope: Show error message
-      console.error("Error");
+      console.error('Error')
     }
   }
 
@@ -101,7 +101,7 @@ export default function Page() {
     <div>
       <h2>Tags</h2>
 
-      {!data && "loading..."}
+      {!data && 'loading...'}
 
       {data && (
         <>
@@ -117,5 +117,5 @@ export default function Page() {
         </>
       )}
     </div>
-  );
+  )
 }

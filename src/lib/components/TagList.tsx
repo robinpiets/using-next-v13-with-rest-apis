@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { Tag } from "../types";
-import { tagAlreadyExists } from "../utils";
+import { useState } from 'react'
+import { Tag } from '../types'
+import { tagAlreadyExists } from '../utils'
 
 type TagListProps = {
-  handleDeleteTag: ({ id, tags }: { id: number; tags: Tag[] }) => void;
-  handleEditTag: ({ tag, tags }: { tag: Tag; tags: Tag[] }) => void;
-  tags: Tag[];
-};
+  handleDeleteTag: ({ id, tags }: { id: number; tags: Tag[] }) => void
+  handleEditTag: ({ tag, tags }: { tag: Tag; tags: Tag[] }) => void
+  tags: Tag[]
+}
 
 const TagList = ({ handleDeleteTag, handleEditTag, tags }: TagListProps) => {
-  const [currentId, setCurrentId] = useState<number | null>(null);
-  const [newTagLabel, setNewTagLabel] = useState<string | null>(null);
+  const [currentId, setCurrentId] = useState<number | null>(null)
+  const [newTagLabel, setNewTagLabel] = useState<string | null>(null)
 
   const saveTag = () => {
     // Save the new tag
@@ -19,7 +19,7 @@ const TagList = ({ handleDeleteTag, handleEditTag, tags }: TagListProps) => {
         handleEditTag({
           tag: { id: currentId, label: newTagLabel },
           tags,
-        });
+        })
       } else {
         // Outside scope: Display error that the new already exists
       }
@@ -28,25 +28,25 @@ const TagList = ({ handleDeleteTag, handleEditTag, tags }: TagListProps) => {
     }
 
     // Reset values
-    setCurrentId(null);
-    setNewTagLabel(null);
-  };
+    setCurrentId(null)
+    setNewTagLabel(null)
+  }
 
   const handleKeyPress = (
     e: React.KeyboardEvent<HTMLButtonElement | HTMLDivElement>,
   ) => {
-    if (e.key === "Enter") {
-      saveTag();
+    if (e.key === 'Enter') {
+      saveTag()
     }
-    if (e.key === "Escape") {
-      setCurrentId(null);
+    if (e.key === 'Escape') {
+      setCurrentId(null)
     }
-  };
+  }
 
   return (
     <ul>
       {tags.map((tag: Tag) => {
-        const isEditing = currentId === tag.id;
+        const isEditing = currentId === tag.id
         return (
           <li key={tag.id}>
             {isEditing ? (
@@ -66,7 +66,7 @@ const TagList = ({ handleDeleteTag, handleEditTag, tags }: TagListProps) => {
               onClick={() => (isEditing ? saveTag() : setCurrentId(tag.id))}
               type="button"
             >
-              {isEditing ? "Save" : "Edit"}
+              {isEditing ? 'Save' : 'Edit'}
             </button>
 
             <button
@@ -76,10 +76,10 @@ const TagList = ({ handleDeleteTag, handleEditTag, tags }: TagListProps) => {
               Delete
             </button>
           </li>
-        );
+        )
       })}
     </ul>
-  );
-};
+  )
+}
 
-export default TagList;
+export default TagList
