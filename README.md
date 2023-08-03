@@ -1,10 +1,12 @@
-This is an assignment by Robin Piets.
+This is an assignment by Robin Piets. The goal was to use Next.js version 13 to with swr to create an app that can add, edit and delete tags on a real API.
+
+Note: I used a build-your-own-API-service that removes itself after 30 days of inactivity, so that needs a new setup when trying to run this app.
 
 ## Getting Started
 
 Requirements:
 
-- Node.js v16.19.0
+- Node.js v16 (or higher)
 
 Install deps:
 
